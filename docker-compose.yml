@@ -1,0 +1,35 @@
+services:
+
+  # ── Rust tunnel + management plane ──────────────────────────────────────────
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      RUST_LOG:                  "info"
+      LABYRINTH_MODE:            "recv"
+      LABYRINTH_CTRL:            "0.0.0.0:8199"
+      LABYRINTH_UDP_LISTEN:      "0.0.0.0:8200"
+      LABYRINTH_JITTER_MIN_MS:   "200"
+      LABYRINTH_JITTER_MAX_MS:   "1200"
+      LABYRINTH_SHARE_STAGGER_MS: "5"
+      DMPOT_MGMT_ADDR:           "0.0.0.0:9090"
+    ports:
+      - "8199:8199/tcp"   # KEM key exchange
+      - "8200:8200/udp"   # tunnel data
+      - "9090:9090/tcp"   # management plane API
+    cap_drop:
+      - ALL
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    security_opt:
+      - no-new-privileges:true
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:9090/health || exit 1"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 5s
+

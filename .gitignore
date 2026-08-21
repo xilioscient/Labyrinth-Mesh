@@ -1,0 +1,19 @@
+# Build artifacts
+/target
+*.so
+*.d
+*.bpf.o
+bpf/
+
+# Generated runtime / test output
+data.bin
+tests_evidence/
+ESbin/
+dist/*.tar.gz
+dist/SHA256SUMS
+
+# Secrets & environment
+.env
+*.key
+*.pem
+*.der

@@ -1,0 +1,29 @@
+[package]
+name = "labyrinth-cli"
+version = "2.0.0"
+edition = "2021"
+description = "Labyrinth-Mesh CLI — subcommand interface (Phase 3)"
+authors = ["Alessandro Faraone"]
+
+[[bin]]
+name = "labyrinth"
+path = "src/main.rs"
+
+[dependencies]
+labyrinth-core = { path = ".." }
+clap = { version = "4", features = ["derive"] }
+log = "0.4"
+env_logger = "0.11"
+rand = "0.8"
+libc = "0.2"
+tokio = { version = "1", features = ["full"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+reqwest = { version = "0.12", features = ["blocking", "json", "rustls-tls", "http2"] }
+axum = "0.7"
+bytes = "1"
+hyper = { version = "1", features = ["http2", "server"] }
+hyper-util = { version = "0.1", features = ["tokio", "server", "service"] }
+tokio-rustls = "0.26"
+rustls = { version = "0.23", features = ["ring"] }
+toml = "0.8"

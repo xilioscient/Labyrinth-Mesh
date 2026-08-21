@@ -1,0 +1,42 @@
+name: Tests
+
+on:
+  push:
+    branches: ["main", "dev"]
+  pull_request:
+    branches: ["main"]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  test:
+    name: cargo test (release)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - uses: Swatinem/rust-cache@v2
+
+      - name: Install BPF build deps
+        run: sudo apt-get update && sudo apt-get install -y clang llvm libbpf-dev
+
+      - name: Build workspace
+        run: cargo build --release --workspace
+
+      - name: Unit tests
+        run: cargo test --release -p labyrinth-core --lib
+
+      - name: Integration — HTTP transport
+        run: cargo test --release --test integration_http_transport -- --test-threads=1
+
+      - name: Integration — pipeline v2
+        run: cargo test --release --test integration_labyrinth -- --test-threads=1
+
+      - name: Integration — improvements
+        run: cargo test --release --test integration_improvements -- --test-threads=1
+
+      - name: Clippy
+        run: cargo clippy --workspace -- -D warnings

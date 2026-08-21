@@ -1,0 +1,15 @@
+target/
+labyrinth-gui/node_modules/
+labyrinth-gui/build/
+labyrinth-gui/.svelte-kit/
+.git/
+*.md
+tests_evidence/
+marketing/
+white-paper/
+docs/
+fogli_tecnici/
+image/
+comandi
+data.bin
+/tmp

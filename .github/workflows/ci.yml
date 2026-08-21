@@ -1,0 +1,56 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+env:
+  CARGO_TERM_COLOR: always
+  RUST_BACKTRACE: 1
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - name: Install build deps
+        run: sudo apt-get update && sudo apt-get install -y clang libssl-dev
+      - name: Build workspace
+        run: cargo build --workspace
+
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - name: Install build deps
+        run: sudo apt-get update && sudo apt-get install -y clang libssl-dev
+      - name: Unit tests
+        run: cargo test -p labyrinth-core --lib
+      - name: Integration — HTTP transport
+        run: cargo test --test integration_http_transport -- --test-threads=1
+      - name: Integration — pipeline v2
+        run: cargo test --test integration_labyrinth -- --test-threads=1
+      - name: Integration — improvements
+        run: cargo test --test integration_improvements -- --test-threads=1
+
+  clippy:
+    name: Clippy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy
+      - uses: Swatinem/rust-cache@v2
+      - name: Install build deps
+        run: sudo apt-get update && sudo apt-get install -y clang libssl-dev
+      - name: Clippy check
+        run: cargo clippy --workspace -- -D warnings
